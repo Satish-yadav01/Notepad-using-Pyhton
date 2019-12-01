@@ -1,0 +1,75 @@
+I am trying to use zoom in, zoom out feature in python. I have previously tried to use the functionality to zoom in a line in turtle, canvas, etc. but nothing seem to work out, instead of zooming, the code is either increasing or decreasing the length of the line. I want to zoom in the line to add text on the line so that when a user zoom's in the line he/she can see the text. here is the code which I am trying to change.
+
+from tkinter import *
+root = Tk()
+Label(root).pack()
+canvas = Canvas(root, width=400, height=400)
+canvas.pack(fill=BOTH, expand=1)
+widget = Button(None, text='zoomin-out')
+widget.pack()
+canvas.create_line(175,175,225,225)
+
+def zoomin(event):
+    d = event.delta
+    if d < 0:
+       amt=0.9
+    else:
+       amt=1.1
+    canvas.scale(ALL, 200,200, amt, amt)
+widget.bind('<Button-1>', zoomin)
+def zoomout(event):
+    d = event.delta
+    if d >0:
+       amt=1.1
+    else:
+       amt=0.7
+    canvas.scale(ALL, 200,200 , amt, amt)
+widget.bind('<Double-1>', zoomout)
+widget.mainloop()
+root.mainloop()
+
+
+I believe that event.delta is only going to be meaningful for mouse-wheel events,
+ not the click events you're binding here. What were you expecting zooming a line to do, 
+other than increasing or decreasing its length? If you want the line to get thicker as you zoom in,
+ you'd have to implement that yourself - canvas.scale() only adjusts coordinates, not any other of the canvas item properties. 
+– jasonharper Jul 18 '18 at 2:21
+When you zoom in on a line, it's naturally going to get longer. – Bryan Oakley Jul 18 '18 at 2:31
+I want to increase the width parallely. The increase in the width would allow the user to see the text which is placed in the circle upon clicking the zoom in button
+
+There are two issues. First, when you add both the Button-1 and Double-1 events to your Button widget, doing a double-click fires both events. They end up cancelling each other out, so only the single-click works as expected.
+
+Second, as I pointed out in this SO answer, certain elements, like text, won't zoom, they'll remain fixed. You'll need to manually scale your fonts to simulate text zoom.
+
+Below's a rework of your code along the above lines. Instead of the problematic single and double click, I've changed it so that left and right clicks on the button cause the canvas to zoom in or out:
+
+from tkinter import *
+
+EXAMPLE_TEXT = "Left or Right click button to zoom in/out"
+FONT_NAME = "Helvetica"
+font_size = 12
+
+def zoom(amount):
+    global font_size
+
+    canvas.scale(ALL, 200, 200, amount, amount)
+
+    font_size *= amount
+    canvas.itemconfigure(text_item, font=(FONT_NAME, int(font_size)))
+
+root = Tk()
+
+canvas = Canvas(root, width=400, height=400)
+canvas.pack(fill=BOTH, expand=1)
+
+text_item = canvas.create_text(200, 200, font=(FONT_NAME, font_size), text=EXAMPLE_TEXT)
+
+canvas.create_oval(50, 50, 350, 350)
+
+widget = Button(root, text='zoom in/out')
+widget.pack()
+
+widget.bind('<Button-1>', lambda e: zoom(1.1))
+widget.bind('<Button-2>', lambda e: zoom(0.7))
+
+root.mainloop() 
