@@ -5,17 +5,18 @@ import os
 import time
 
 if __name__=='__main__':
-    #Basic tkinter setup
+    
+    #Basic tkinter setup------------------------------------------------------
     root=Tk()
     root.geometry("700x788")
     root.title("Untitled-Notepad")
     root.iconbitmap(r'notepad-icon\favicon.ico')
 
-    #Variable Declaration
+    #Variable Declaration------------------------------------------------------------
     Statusvar=StringVar()
     Statusvar.set("  Ready")
     
-    #File-functions
+    #File-functions--------------------------------------------------
     def NewFile():
         Statusvar.set("Creating New File")
         Statusbar.update()
@@ -74,7 +75,7 @@ if __name__=='__main__':
         root.destroy()
         print("Exit")
     
-    #Edit-Function
+    #Edit-Function------------------------------------------------------
     def undo():
         TextArea.event_generate(("<<Undo>>"))
     def Cut():
@@ -157,7 +158,7 @@ if __name__=='__main__':
         Statusvar.set("  Ready")
         Statusbar.update()
         
-    #Formate-Function
+    #Formate-Function----------------------------------------------------------------------
     def WordWrap():
         Statusvar.set("WordWrap")
         Statusbar.update()
@@ -173,7 +174,7 @@ if __name__=='__main__':
         Statusbar.update()
         
     
-    #View-Function
+    #View-Function-----------------------------------------------------------------------------
     def Zoom():
         Statusvar.set("Zooming")
         Statusbar.update()
@@ -189,7 +190,7 @@ if __name__=='__main__':
         Statusbar.update()
         
 
-    #Help-Function:
+    #Help-Function:--------------------------------------------------------------------
     def viewhelp():
         Statusvar.set("You clicked on help")
         Statusbar.update()
@@ -198,9 +199,48 @@ if __name__=='__main__':
         Statusbar.update()
         
     def SendFeed():
+        #-------------variables--------------------------------------------------------------------------
+        var1=IntVar()
+        var2=IntVar()
+        svalue=StringVar()
+        #------------------------------------------------------------------------------
+        #---------------function--------------------------------------------------------
+        def submit():
+            if  var1.get()!=0:
+                if svalue.get() is not None:
+                    if var2.get() is not None or var2.get()!=0:
+                            messagebox.showinfo("Feedback","Sending Your Feedback..\n\nYour name is %s"%svalue.get()+"\nYour Age is %s"%str(var1.get())+"\nYour Phone no is %s"%str(var2.get()))
+            else:
+                messagebox.showinfo("Error","Please fills the required information!!!!!!")
+            
+                
+        #------------------------------------------------------------------------------ 
         Statusvar.set("You Sending Feedback")
         Statusbar.update()
         time.sleep(0.5)
+        top=Toplevel()
+        top.title("Feedback")
+        top.geometry("400x300")
+        #---------------   form-Code   ---------------------------------------------
+        lab=Label(top,text="Fill the feedback")
+        lab.grid(row=0,column=0,padx=10,pady=10,ipadx=10,ipady=10,sticky="E")
+        l1=Label(top,text="Enter your Name:")
+        l2=Label(top,text="Enter your Age:")
+        l3=Label(top,text="Enter your Phone no:")
+        E1=Entry(top,textvariable=svalue,relief=SUNKEN)
+        E2=Entry(top,textvariable=var1,relief=SUNKEN)
+        E3=Entry(top,textvariable=var2,relief=SUNKEN)
+        l1.grid(row=1,column=0,padx=10,pady=10,ipadx=5,ipady=5)
+        l2.grid(row=2,column=0,padx=10,pady=10,ipadx=5,ipady=5)
+        l3.grid(row=3,column=0,padx=10,pady=10,ipadx=5,ipady=5)
+        E1.grid(row=1,column=1,padx=10,pady=10,ipadx=5,ipady=5)
+        E2.grid(row=2,column=1,padx=10,pady=10,ipadx=5,ipady=5)
+        E3.grid(row=3,column=1,padx=10,pady=10,ipadx=5,ipady=5)
+        #---------------button---------------------------------------------------
+        submit=Button(top,text="Submit",command=submit,relief=RAISED)
+        submit.grid(row=5,column=1,padx=10,pady=10,ipadx=5,ipady=5)
+        top.mainloop()
+        #------------------------------------------------
         Statusvar.set("  Ready")
         Statusbar.update()
         
@@ -212,12 +252,12 @@ if __name__=='__main__':
         Statusvar.set("  Ready")
         Statusbar.update()
     
-    #Add textArea
+    #Add textArea---------------------------------
     TextArea=Text(root,font="lucida 13")
     file=None
     TextArea.pack(expand=True,fill=BOTH)
 
-    #Menubar-File
+    #Menubar-File-------------------------------------
     Menubar=Menu(root)
     filemenu=Menu(Menubar,tearoff=0)
     filemenu.add_command(label="New",command=NewFile)
@@ -227,7 +267,7 @@ if __name__=='__main__':
     filemenu.add_command(label="Exit",command=quitApp)
     Menubar.add_cascade(label="File",menu=filemenu)
 
-    #Edit
+    #Edit------------------------------------------------------------
     Edit=Menu(Menubar,tearoff=0)
     Edit.add_command(label="Undo",command=undo)
     Edit.add_separator()
@@ -246,19 +286,19 @@ if __name__=='__main__':
     Edit.add_command(label="Time/Date",command=Time)
     Menubar.add_cascade(label="Edit",menu=Edit)
 
-    #Formate
+    #Formate-----------------------------------------------------------------
     FormateMenu=Menu(Menubar,tearoff=0)
     FormateMenu.add_command(label="Word Wrap",command=WordWrap)
     FormateMenu.add_command(label="Font..",command=Font)
     Menubar.add_cascade(label="Formate",menu=FormateMenu)
 
-    #View
+    #View---------------------------------------------------------------------------
     ViewMenu=Menu(Menubar,tearoff=0)
     ViewMenu.add_command(label="Zoom",command=Zoom)
     ViewMenu.add_command(label="Status Bar",command=StatusBar)
     Menubar.add_cascade(label="View",menu=ViewMenu)
 
-    #help
+    #help----------------------------------------------------------------------------
     HelpMenu=Menu(Menubar,tearoff=0)
     HelpMenu.add_command(label="Viewhelp",command=viewhelp)
     HelpMenu.add_command(label="Send Feedback",command=SendFeed)
@@ -266,7 +306,7 @@ if __name__=='__main__':
     Menubar.add_cascade(label="Help",menu=HelpMenu)
     root.config(menu=Menubar)
 
-    #adding Vertical scrollbar
+    #adding Vertical scrollbar---------------------------------------------
     Scroll=Scrollbar(TextArea)
     Scroll.pack(side=RIGHT,fill=Y)
     Scroll.config(command=TextArea.yview)
@@ -279,7 +319,7 @@ if __name__=='__main__':
     TextArea.config(xscrollcommand=Scrollx.set)"""
 
     
-    #Status-Bar
+    #Status-Bar-------------------------------------------------------------------
     Statusbar=Label(root,textvariable=Statusvar,relief=SUNKEN,anchor="w")
     Statusbar.pack(side=BOTTOM,fill=X)
     root.mainloop()
